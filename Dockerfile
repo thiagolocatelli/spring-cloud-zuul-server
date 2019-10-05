@@ -9,4 +9,4 @@ MAINTAINER thiagolocatelli <thiago.locatelli@gmail.com>
 EXPOSE 8080
 WORKDIR /app/
 COPY --from=builder /app/target/spring-cloud-zuul-server.jar /app/spring-cloud-zuul-server.jar
-ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "/application/spring-cloud-zuul-server.jar"]
+ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "/app/spring-cloud-zuul-server.jar"]

@@ -1,0 +1,55 @@
+version: '3.5'
+services:
+
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    container_name: nginx-proxy
+    ports:
+      - "80:80"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+    restart: "always"
+    depends_on:
+      - zuul-server
+
+  portainer:
+    image: portainer/portainer
+    container_name: portainer
+    ports:
+      - "9000:9000"
+    environment:
+      - VIRTUAL_HOST=portainer.127.0.0.1.xip.io
+    command: --no-auth
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: "always"
+
+  discovery-server:
+    image: thiagolocatelli/spring-cloud-discovery-server
+    container_name: discovery-server
+    ports:
+      - "8888:8888"
+    environment:
+      - VIRTUAL_HOST=eureka.127.0.0.1.xip.io
+    restart: "always"
+    depends_on:
+      - portainer
+
+  zuul-server:
+    image: thiagolocatelli/spring-cloud-zuul-server
+    container_name: zuul-server
+    ports:
+      - "8889:8080"
+    environment:
+      - VIRTUAL_HOST=zuul.127.0.0.1.xip.io
+      - EUREKA_CLIENT_ENABLED=true
+      - EUREKA_CLIENT_SERVICE_URL=http://discovery-server:8888/eureka
+      - INFO_APP_CONTACT_NAME=Thiago Locatelli
+      - INFO_APP_CONTACT_URL=https://thiagolocatelli.dev
+      - INFO_APP_CONTACT_EMAIL=thiago.locatelli@gmail.com
+      - INFO_APP_NAME=Zuul Proxy Server
+      - INFO_APP_DESCRIPTION=Spring Boot running Netflix Zuul Proxy
+      - INFO_APP_VERSION=2.1.9-RELEASE
+    restart: "always"
+    depends_on:
+      - discovery-server
