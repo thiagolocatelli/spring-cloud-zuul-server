@@ -1,4 +1,4 @@
-package com.github.thiagolocatelli.cloud.zuulserver;
+package com.github.thiagolocatelli.cloud.zuulserver.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
